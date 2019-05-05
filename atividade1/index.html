@@ -115,7 +115,28 @@
 
     animate();
 
+    window.addEventListener('keydown', onKeyDown, false);
 
+    function onKeyDown(e) {
+
+      var stepScale = 0.5;
+
+      if (e.which == 38) {
+
+        lamborghini.scale['x'] += stepScale;
+        lamborghini.scale['y'] += stepScale;
+        lamborghini.scale['z'] += stepScale;
+
+      }
+      else if(e.which == 40 && lamborghini.scale['x'] > 1){
+        
+        lamborghini.scale['x'] -= stepScale;
+        lamborghini.scale['y'] -= stepScale;
+        lamborghini.scale['z'] -= stepScale;
+
+      }
+
+    }
 
   </script>
 </body>
