@@ -1,0 +1,180 @@
+<!-- Adapted from https://bl.ocks.org/chrisbrasington and https://gist.github.com/kylemcdonald/9593057 -->
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>OBJloader</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <button id= "ScaleM">Scale + </button>
+        <button id= "ScaleL">Scale - </button>
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #fff;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				color: #fff;
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				text-align: center;
+				z-index: 100;
+				display:block;
+			}
+            /*Definição dos estilos dos btões */
+			#info a, .button { color: #f00; font-weight: bold; text-decoration: underline; cursor: pointer }
+            #ScaleM {
+                position: absolute;
+                bottom: 90px;
+                left: 40px;
+            }
+            
+            #ScaleL{
+                position: absolute;
+                bottom: 120px;
+                left: 40px;
+            }
+            
+		</style>
+	</head>
+
+	<body>
+		<div id="info">
+            OBJ loader with ThreeJS
+		</div>
+        
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r61/three.min.js"></script>    
+		<script src="js/three.min.js"></script>
+		<script src="js/OBJ_loader.js"></script>
+		<script src="js/MTLLoader.js"></script>
+
+        <!-- Descreve vertex shader -->    
+        <script id="vertexShader" type="x-shader/x-vertex">
+            uniform float time;
+            uniform vec2 resolution;
+            void main()	{
+                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+	        }
+        </script>
+        
+        <!-- Descreve fragment shader (Altera a cor do objeto) -->
+        <script id="fragmentShader" type="x-shader/x-fragment">
+            uniform float time;
+            uniform vec2 resolution;
+            void main()	{
+                gl_FragColor = vec4(0.5, 0.7, 0.7, 1.0);
+            }
+        </script>
+        
+		<script>
+            var clock = new THREE.Clock();
+            var delta = clock.getDelta(); // seconds.
+            var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
+			var container, stats;
+			var camera, scene, renderer;
+			var mouseX = 0, mouseY = 0;
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+            
+			init();
+			animate();
+			function init() {
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+                //Cria camera
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera.position.z = 600;
+                
+				//Cria scene
+				scene = new THREE.Scene();
+                scene.background = new THREE.Color( 0x070528 );//cor do fundo da cena
+                
+                var uniforms = {
+                    time: { type: "f", value: 1.0 },
+                    resolution: { type: "v2", value: new THREE.Vector2() }
+                };
+                
+               var material = new THREE.ShaderMaterial( {
+                    uniforms: uniforms,
+                    vertexShader: document.getElementById( 'vertexShader' ).textContent,
+                    fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+                });
+               
+                //Carrega objeto .OBJ
+				var loader = new THREE.OBJLoader();
+				loader.load( '../OBJ/PORG.OBJ', function ( object ) {
+                    
+                   object.traverse( function ( child ) {    // para colocar cor no objeto
+                        if ( child instanceof THREE.Mesh )
+                            child.material.color.setHex (0x8c0000);
+                            child.material = material;
+                        });
+                    object.position.x = - 60;
+                    object.scale.x = 1;
+                    object.scale.y = 1;
+                    object.scale.z = 1;
+                    obj = object;
+					scene.add( obj );
+				} );
+                
+                /*
+                    Para o PORG.OBJ scale = 1
+                    Para o Male.OBJ scale = 40
+                    Para o ship.obj scale = 30
+                    Para o book.obj scale = 80
+                  
+                    Alterar para 5 valor de redimensionamento de escala para objetos - exceto PORG
+                    
+                */
+				renderer = new THREE.WebGLRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				window.addEventListener( 'resize', onWindowResize, false );
+			}
+			function onWindowResize() {
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+			function onDocumentMouseMove( event ) {
+				mouseX = ( event.clientX - windowHalfX ) / 2;
+				mouseY = ( event.clientY - windowHalfY ) / 2;
+			}
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+			function render() {
+               
+                obj.rotation.x += (0.2*(Math.PI / 180));
+                obj.rotation.x %=360;
+                
+				camera.position.x += ( mouseX - camera.position.x ) * .05;
+				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+				camera.lookAt( scene.position );
+                document.getElementById( "ScaleM" ).onclick = function () {
+                        obj.scale.x += 0.5;
+                        obj.scale.y += 0.5;
+                        obj.scale.z += 0.5;
+                };
+                
+                 document.getElementById( "ScaleL" ).onclick = function () {
+                    if (obj.scale.x > 0.5) {
+                        obj.scale.x -= 0.5;
+                        obj.scale.y -= 0.5;
+                        obj.scale.z -= 0.5;
+                    }
+                };
+             
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
+</html>

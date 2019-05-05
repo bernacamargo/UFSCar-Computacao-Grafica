@@ -1,0 +1,6 @@
+newmtl almondKernels:shellSG
+illum 4
+Ks 0 0 0
+map_Kd pumpkinseed_normal.png
+bump pumpkinseed_normal.png -bm 1
+Ni 1.00
