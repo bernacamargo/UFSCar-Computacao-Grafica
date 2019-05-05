@@ -43,9 +43,6 @@
     var controls = new THREE.OrbitControls( camera );
     controls.enabled = true;
 
-    console.log(controls);
-
-
     camera.position.set(10, 10, 10);
     controls.update();
 
@@ -56,14 +53,8 @@
     // Create a Cube Mesh with basic material
     var geometry = new THREE.BoxGeometry( 1, 1, 1 );
     var material = new THREE.MeshBasicMaterial( { color: "#433F81" } );
-    var cube = new THREE.Mesh( geometry, material );
 
     var lamborghini = null;
-
-    // Add cube to Scene
-    // scene.add( cube );
-
-
 
     // instantiate a loader
     var loader = new THREE.OBJLoader();
@@ -74,8 +65,6 @@
       'http://localhost/UFSCar-Computacao-Grafica/atividade1/assets/Car 2014 Lamborghini Huracan LP 610-4 Forza Horizon N290119.obj',
       // called when resource is loaded
       function ( object ) {
-
-        // object.position.y -= 60;
 
         lamborghini = object;
 
