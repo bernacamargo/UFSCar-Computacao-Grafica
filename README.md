@@ -9,4 +9,4 @@ Repositório das atividades da disciplina de Computação Gráfica, ministrada p
 
 #### Descrição:
 
-Este projeto utiliza a biblioteca JavaScript [threeJS](https://github.com/mrdoob/three.js/).
+Este projeto utiliza a biblioteca JavaScript [threeJS](https://github.com/mrdoob/three.js/) para estudar objetos 3D.
