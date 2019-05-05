@@ -4,8 +4,8 @@ Repositório das atividades da disciplina de Computação Gráfica, ministrada p
 #### Integrantes:
 
 - Bernardo Camargo [@bernacamargo](https://github.com/bernacamargo)
-- 
-- 
+- Angelo de Souza [@angelobzsouza](https://github.com/angelobzsouza)
+- Mariane Malheiros [@maryanne25](https://github.com/maryanne25)
 
 #### Descrição:
 
