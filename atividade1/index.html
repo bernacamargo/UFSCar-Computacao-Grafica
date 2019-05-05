@@ -26,20 +26,28 @@
     var scene = new THREE.Scene();
 
     // Create a basic perspective camera
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-    camera.position.z = 200;
+    var camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 10000 );
 
     // Create a renderer with Antialiasing
-    var renderer = new THREE.WebGLRenderer({antialias:true});
+    var renderer = new THREE.WebGLRenderer();
 
     // Configure renderer clear color
-    renderer.setClearColor("#000000");
+    renderer.setClearColor("#fff");
 
     // Configure renderer size
     renderer.setSize( window.innerWidth, window.innerHeight );
 
     // Append Renderer to DOM
     document.body.appendChild( renderer.domElement );
+
+    var controls = new THREE.OrbitControls( camera );
+    controls.enabled = true;
+
+    console.log(controls);
+
+
+    camera.position.set(10, 10, 10);
+    controls.update();
 
     // ------------------------------------------------
     // FUN STARTS HERE
@@ -50,26 +58,64 @@
     var material = new THREE.MeshBasicMaterial( { color: "#433F81" } );
     var cube = new THREE.Mesh( geometry, material );
 
-    // Add cube to Scene
-    scene.add( cube );
+    var lamborghini = null;
 
-    var controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.enableZoom = true;
-    controls.campingFactor = 0.25;
+    // Add cube to Scene
+    // scene.add( cube );
+
+
+
+    // instantiate a loader
+    var loader = new THREE.OBJLoader();
+
+    // load a resource
+    loader.load(
+      // resource URL
+      'http://localhost/UFSCar-Computacao-Grafica/atividade1/assets/Car 2014 Lamborghini Huracan LP 610-4 Forza Horizon N290119.obj',
+      // called when resource is loaded
+      function ( object ) {
+
+        // object.position.y -= 60;
+
+        lamborghini = object;
+
+        scene.add( object );
+
+      },
+      // called when loading is in progresses
+      function ( xhr ) {
+
+        console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+      },
+      // called when loading has errors
+      function ( error ) {
+
+        console.log( 'An error happened' );
+
+      }
+    );
 
     // Render Loop
-    var render = function () {
-      requestAnimationFrame( render );
+    var animate = function () {
+      requestAnimationFrame( animate );
 
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+      if(lamborghini !== null){        
+        // lamborghini.rotation.x += 0.01;
+        lamborghini.rotation.y += 0.01;
+        // lamborghini.rotation.z += 0.01;
+      }
+
+      controls.update();
+
 
       // Render the scene
       renderer.render(scene, camera);
     };
 
-    render();
+    animate();
+
+
 
   </script>
 </body>
