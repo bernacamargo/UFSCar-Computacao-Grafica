@@ -9,4 +9,10 @@ Repositório das atividades da disciplina de Computação Gráfica, ministrada p
 
 #### Descrição:
 
-Este projeto utiliza a biblioteca JavaScript [threeJS](https://github.com/mrdoob/three.js/) para estudar objetos 3D.
+Este projeto utiliza a biblioteca JavaScript [threeJS](https://github.com/mrdoob/three.js/) com o objetivo de analisar e estudar o comportamento objetos 3D.
+
+~~Atividade 1 (A1)~~ - Entrega: 07/05
+
+- Visualização de um modelo mais complexo, contendo um número maior de vértices e faces, fornecidos por um arquivo (por exemplo, obj);
+- Utilização simples de shaders, apenas redimensionamento para o volume de visão;
+  Sem posicionamento correto, textura, iluminação, animação, etc...
