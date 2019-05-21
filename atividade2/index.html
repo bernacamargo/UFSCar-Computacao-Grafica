@@ -1,2 +1,155 @@
 <html>
+	<head>
+	  <meta charset=utf-8>
+	  <title>Atividade II - Computação Gráfica</title>
+	  <!--  Three.js CDN  -->
+	  <script src="../js/three.js"></script>
+	  <script src="../js/loader/OBJLoader.js"></script>
+	  <script src="../js/OrbitControls.js"></script>  
+	  <script src="../js/loader/MTLLoader.js"></script>
+	  <style>
+		  body { margin: 0; }
+		  canvas { width: 100%; height: 100% }
+	  </style>
+	</head>
+
+	<body>
+
+	  <script>
+			  // ------------------------------------------------
+			// BASIC SETUP
+			// ------------------------------------------------
+
+			// Create an empty scene
+			var scene = new THREE.Scene();
+
+			// Create a basic perspective camera
+			var camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 10000 );
+
+			// Create a renderer with Antialiasing
+			var renderer = new THREE.WebGLRenderer();
+
+			// Configure renderer clear color
+			renderer.setClearColor("#fff");
+
+			// Configure renderer size
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			// Append Renderer to DOM
+			document.body.appendChild( renderer.domElement );
+
+			var controls = new THREE.OrbitControls( camera );
+			controls.enabled = true;
+
+			console.log(controls);
+
+
+			camera.position.set(10, 10, 10);
+			controls.update();
+
+			// ------------------------------------------------
+			// FUN STARTS HERE
+			// ------------------------------------------------
+			var lamborghini = null;
+		  	var tree = null;
+		  
+			// instantiate a loader
+			var loader = new THREE.OBJLoader();
+		  	var loader2 = new THREE.OBJLoader();
+
+			// load a resource
+			loader.load(
+			  // resource URL
+			  'assets/Car/Car 2014 Lamborghini Huracan LP 610-4 Forza Horizon N290119.obj',
+			  // called when resource is loaded
+			  function ( object ) {
+
+				// object.position.y -= 60;
+
+				lamborghini = object;
+				scene.add( object );
+
+				/*var stepScale = 2;
+				lamborghini.scale['x'] = stepScale;
+				lamborghini.scale['y'] = stepScale;
+				lamborghini.scale['z'] = stepScale;*/
+				  
+				lamborghini.position.set(0, 0, 0);
+
+			  },
+			  // called when loading is in progresses
+			  function ( xhr ) {
+
+				console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+			  },
+			  // called when loading has errors
+			  function ( error ) {
+
+				console.log( 'An error happened' );
+
+			  }
+			);
+
+		  	loader2.load(
+				'assets/Tree/Tree.obj',
+				
+				function(object){
+					tree = object;
+					scene.add(tree);
+					
+				var tScale = 2;
+				tree.scale['x'] = tScale;
+				tree.scale['y'] = tScale;
+				tree.scale['z'] = tScale;
+					
+					tree.position.set(5, 0, 0);
+				},
+				
+			  // called when loading is in progresses
+			  function ( xhr ) {
+				console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+			  },
+
+			  // called when loading has errors
+			  function ( error ) {
+				console.log( 'An error happened' );
+			  }
+			
+			);
+		  
+			// Render Loop
+			var animate = function () {
+			  requestAnimationFrame( animate );
+			  controls.update();
+
+			  // Render the scene
+			  renderer.render(scene, camera);
+			};
+
+			animate();
+	 
+		  
+		  	    window.addEventListener('keydown', onKeyDown, false);
+
+    function onKeyDown(e) {
+
+      var stepPosition = 0.5;
+
+      if (e.which == 38) {
+
+        lamborghini.position['z'] += stepPosition;
+
+      }
+      else if(e.which == 40){
+        
+        lamborghini.position['z'] -= stepPosition;
+
+      }
+
+    }
+	  
+		</script>
+	</body>
+		
 </html>
