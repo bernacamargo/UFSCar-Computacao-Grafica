@@ -9,118 +9,120 @@
 	  <script src="../js/loader/MTLLoader.js"></script>
 	  <style>
 		  body { margin: 0; }
-		  canvas { width: 100%; height: 100% }
+		  canvas { width: 100%; height: 100%}
+
+			.info {
+				position: absolute;
+				top: 10px;
+				margin-left: 10px;
+				width: 50%;
+				z-index: 100;
+				display:block;
+			}
 	  </style>
 	</head>
 
 	<body>
+		<div class="info">
+			<h2>Controles</h2>
+			<p>Mover para Frente: &uarr;</p>
+			<p>Mover para Trás: &darr;</p>
+			<p>Câmera 1: 1</p>
+			<p>Câmera 2: 2</p>
+		</div>
 
-	  <script>
-			  // ------------------------------------------------
+		<script>	
+			// ------------------------------------------------
 			// BASIC SETUP
 			// ------------------------------------------------
-
-			// Create an empty scene
+			// Sceane
 			var scene = new THREE.Scene();
 
-			// Create a basic perspective camera
-			var camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 10000 );
+			// Camera
+			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
+			camera.position.set(0, 5, 20);
+			camera.lookAt(10, 10, 10);
 
-			// Create a renderer with Antialiasing
+			// Render
 			var renderer = new THREE.WebGLRenderer();
-
-			// Configure renderer clear color
 			renderer.setClearColor("#fff");
-
-			// Configure renderer size
-			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setSize(window.innerWidth, window.innerHeight);
 
 			// Append Renderer to DOM
-			document.body.appendChild( renderer.domElement );
+			document.body.appendChild(renderer.domElement);
 
-			var controls = new THREE.OrbitControls( camera );
-			controls.enabled = true;
-
-			console.log(controls);
-
-
-			camera.position.set(10, 10, 10);
+			// Controls
+			var controls = new THREE.OrbitControls(camera);
+			controls.enabled = false;
 			controls.update();
 
 			// ------------------------------------------------
 			// FUN STARTS HERE
 			// ------------------------------------------------
+			// Objects
 			var lamborghini = null;
-		  	var tree = null;
+			var tree = null;
+			
+			//Adiciona eixos
+			var axis = new THREE.AxisHelper(10);
+			scene.add(axis); 
 		  
-			// instantiate a loader
+			// Loader
 			var loader = new THREE.OBJLoader();
-		  	var loader2 = new THREE.OBJLoader();
+		  var loader2 = new THREE.OBJLoader();
 
-			// load a resource
+			// Load Lamborghini
 			loader.load(
-			  // resource URL
-			  'assets/Car/Car 2014 Lamborghini Huracan LP 610-4 Forza Horizon N290119.obj',
-			  // called when resource is loaded
-			  function ( object ) {
-
-				// object.position.y -= 60;
-
-				lamborghini = object;
-				scene.add( object );
-
-				/*var stepScale = 2;
-				lamborghini.scale['x'] = stepScale;
-				lamborghini.scale['y'] = stepScale;
-				lamborghini.scale['z'] = stepScale;*/
-				  
-				lamborghini.position.set(0, 0, 0);
-
-			  },
-			  // called when loading is in progresses
-			  function ( xhr ) {
-
-				console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-
-			  },
+			  //URL
+				'assets/Car/Car 2014 Lamborghini Huracan LP 610-4 Forza Horizon N290119.obj',
+				
+			  // Called when loaded
+			  function (object) {
+					lamborghini = object;
+					scene.add(lamborghini);
+					lamborghini.position.set(0, 0, 0);
+				},
+				
+			  // Called while loading
+			  function (xhr) {
+					console.log( (xhr.loaded / xhr.total * 100 ) + '% loaded' );
+				},
+				
 			  // called when loading has errors
-			  function ( error ) {
-
-				console.log( 'An error happened' );
-
+			  function (error) {
+					//console.log( 'Error to load Lamborghini object' );
 			  }
 			);
 
-		  	loader2.load(
+			loader2.load(
+			  //URL
 				'assets/Tree/Tree.obj',
 				
+			  // Called when loaded
 				function(object){
 					tree = object;
 					scene.add(tree);
-					
-				var tScale = 2;
-				tree.scale['x'] = tScale;
-				tree.scale['y'] = tScale;
-				tree.scale['z'] = tScale;
-					
+					var tScale = 1.7;
+					tree.scale['x'] = tScale;
+					tree.scale['y'] = tScale;
+					tree.scale['z'] = tScale;
 					tree.position.set(5, 0, 0);
 				},
 				
-			  // called when loading is in progresses
-			  function ( xhr ) {
-				console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-			  },
+			  // Called while loading
+				function (xhr) {
+					//console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+				},
 
-			  // called when loading has errors
-			  function ( error ) {
-				console.log( 'An error happened' );
-			  }
-			
+				// called when loading has errors
+				function (error) {
+					console.log( 'Error to load tree' );
+				}
 			);
 		  
 			// Render Loop
 			var animate = function () {
-			  requestAnimationFrame( animate );
+			  requestAnimationFrame(animate);
 			  controls.update();
 
 			  // Render the scene
@@ -128,28 +130,28 @@
 			};
 
 			animate();
-	 
-		  
-		  	    window.addEventListener('keydown', onKeyDown, false);
+			
+			window.addEventListener('keydown', onKeyDown, false);
 
-    function onKeyDown(e) {
+			function onKeyDown(e) {
+				var stepPosition = 0.5;
 
-      var stepPosition = 0.5;
+				//Move car with arrows controls
+				if (e.which == 38) {
+					lamborghini.position['z'] += stepPosition;
+				}
+				else if(e.which == 40){
+					lamborghini.position['z'] -= stepPosition;
+				}
 
-      if (e.which == 38) {
-
-        lamborghini.position['z'] += stepPosition;
-
-      }
-      else if(e.which == 40){
-        
-        lamborghini.position['z'] -= stepPosition;
-
-      }
-
-    }
-	  
+				//Change camera
+				if (e.which == 49) {
+					camera.position.set(0, 5, 20);
+				}
+				else if (e.which == 50) {
+					camera.position.set(10, 10, 10);
+				}
+			}
 		</script>
 	</body>
-		
 </html>
