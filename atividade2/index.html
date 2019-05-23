@@ -71,7 +71,7 @@
 			var loader = new THREE.OBJLoader();
 		  var loader2 = new THREE.OBJLoader();
 
-			// Load Lamborghini
+			// Loader Lamborghini
 			loader.load(
 			  //URL
 				'assets/Car/Car 2014 Lamborghini Huracan LP 610-4 Forza Horizon N290119.obj',
@@ -94,6 +94,7 @@
 			  }
 			);
 
+			// Loader Tree
 			loader2.load(
 			  //URL
 				'assets/Tree/Tree.obj',
@@ -128,11 +129,9 @@
 			  // Render the scene
 			  renderer.render(scene, camera);
 			};
-
 			animate();
 			
 			window.addEventListener('keydown', onKeyDown, false);
-
 			function onKeyDown(e) {
 				var stepPosition = 0.5;
 
