@@ -1,9 +1,10 @@
 <html>
 	<head>
 	  <meta charset=utf-8>
-	  <title>Atividade II - Computação Gráfica</title>
-	  <!--  Three.js CDN  -->
-	  <script src="../js/three.js"></script>
+		<title>Atividade II - Computação Gráfica</title>
+		
+		<!--  Three.js CDN  -->
+ 	  <script src="../js/three.js"></script>
 	  <script src="../js/loader/OBJLoader.js"></script>
 	  <script src="../js/OrbitControls.js"></script>  
 	  <script src="../js/loader/MTLLoader.js"></script>
@@ -40,8 +41,9 @@
 
 			// Camera
 			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
+			camera.lookAt([10, 0, 0]);
 			camera.position.set(0, 5, 20);
-			camera.lookAt(10, 10, 10);
+
 
 			// Render
 			var renderer = new THREE.WebGLRenderer();
@@ -63,7 +65,8 @@
 			var lamborghini = null;
 			var tree = null;
 			
-			//Adiciona eixos
+
+ 			//Adiciona eixos
 			var axis = new THREE.AxisHelper(10);
 			scene.add(axis); 
 		  
@@ -80,6 +83,10 @@
 			  function (object) {
 					lamborghini = object;
 					scene.add(lamborghini);
+					var tScale = 1;
+					lamborghini.scale['x'] = tScale;
+					lamborghini.scale['y'] = tScale;
+					lamborghini.scale['z'] = tScale;
 					lamborghini.position.set(0, 0, 0);
 				},
 				
@@ -135,20 +142,26 @@
 			function onKeyDown(e) {
 				var stepPosition = 0.5;
 
-				//Move car with arrows controls
-				if (e.which == 38) {
-					lamborghini.position['z'] += stepPosition;
-				}
-				else if(e.which == 40){
-					lamborghini.position['z'] -= stepPosition;
-				}
-
-				//Change camera
-				if (e.which == 49) {
-					camera.position.set(0, 5, 20);
-				}
-				else if (e.which == 50) {
-					camera.position.set(10, 10, 10);
+				//Controls
+				switch (e.which) {
+					//Move car with arrows controls
+					case 38:
+						lamborghini.position['z'] += stepPosition;
+					break;
+					case 40:
+						lamborghini.position['z'] -= stepPosition;
+					break;
+					//Change camera
+					case 49:
+						camera.position.set(0, 5, 20);
+					break;
+					case 50:
+						camera.position.set(10, 10, 10);
+					break;
+						lamborghini.applyMatrix();
+					default:
+						console.log(lamborghini.matrix);
+					break;
 				}
 			}
 		</script>
