@@ -1,15 +1,20 @@
+<!DOCTYPE html>
 <html>
 	<head>
-	  <meta charset=utf-8>
-	  <title>Atividade II - Computação Gráfica</title>
-	  <!--  Three.js CDN  -->
-	  <script src="../js/three.js"></script>
-	  <script src="../js/loader/OBJLoader.js"></script>
-	  <script src="../js/OrbitControls.js"></script>  
-	  <script src="../js/loader/MTLLoader.js"></script>
-	  <style>
-		  body { margin: 0; }
-		  canvas { width: 100%; height: 100%}
+		<meta charset="utf-8">
+		<title>Atividade II - Computação Gráfica</title>
+		<script src="../js/three.js"></script>
+		<script src="../js/DDSLoader.js"></script>
+		<script src="../js/MTLLoader.js"></script>
+		<script src="../js/OBJLoader.js"></script>
+		<script src="../js/OrbitControls.js"></script>
+		<style>
+			body { 
+				margin: 0; 
+				overflow-x: hidden;
+				overflow-y: hidden;
+			}
+			canvas { width: 100%; height: 100%}
 
 			.info {
 				position: absolute;
@@ -19,7 +24,7 @@
 				z-index: 100;
 				display:block;
 			}
-	  </style>
+		</style>
 	</head>
 
 	<body>
@@ -31,106 +36,113 @@
 			<p>Câmera 2: 2</p>
 		</div>
 
-		<script>	
-			// ------------------------------------------------
-			// BASIC SETUP
-			// ------------------------------------------------
-			// Sceane
-			var scene = new THREE.Scene();
+		<script>
+			var container;
+			var camera, scene, renderer;
+			var controls;
 
-			// Camera
-			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
-			camera.position.set(0, 5, 20);
-			camera.lookAt(10, 10, 10);
-
-			// Render
-			var renderer = new THREE.WebGLRenderer();
-			renderer.setClearColor("#fff");
-			renderer.setSize(window.innerWidth, window.innerHeight);
-
-			// Append Renderer to DOM
-			document.body.appendChild(renderer.domElement);
-
-			// Controls
-			var controls = new THREE.OrbitControls(camera);
-			controls.enabled = false;
-			controls.update();
-
-			// ------------------------------------------------
-			// FUN STARTS HERE
-			// ------------------------------------------------
-			// Objects
-			var lamborghini = null;
-			var tree = null;
-			
-			//Adiciona eixos
-			var axis = new THREE.AxisHelper(10);
-			scene.add(axis); 
-		  
-			// Loader
-			var loader = new THREE.OBJLoader();
-		  var loader2 = new THREE.OBJLoader();
-
-			// Loader Lamborghini
-			loader.load(
-			  //URL
-				'assets/Car/Car 2014 Lamborghini Huracan LP 610-4 Forza Horizon N290119.obj',
-				
-			  // Called when loaded
-			  function (object) {
-					lamborghini = object;
-					scene.add(lamborghini);
-					lamborghini.position.set(0, 0, 0);
-				},
-				
-			  // Called while loading
-			  function (xhr) {
-					console.log( (xhr.loaded / xhr.total * 100 ) + '% loaded' );
-				},
-				
-			  // called when loading has errors
-			  function (error) {
-					//console.log( 'Error to load Lamborghini object' );
-			  }
-			);
-
-			// Loader Tree
-			loader2.load(
-			  //URL
-				'assets/Tree/Tree.obj',
-				
-			  // Called when loaded
-				function(object){
-					tree = object;
-					scene.add(tree);
-					var tScale = 1.7;
-					tree.scale['x'] = tScale;
-					tree.scale['y'] = tScale;
-					tree.scale['z'] = tScale;
-					tree.position.set(5, 0, 0);
-				},
-				
-			  // Called while loading
-				function (xhr) {
-					//console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-				},
-
-				// called when loading has errors
-				function (error) {
-					console.log( 'Error to load tree' );
-				}
-			);
-		  
-			// Render Loop
-			var animate = function () {
-			  requestAnimationFrame(animate);
-			  controls.update();
-
-			  // Render the scene
-			  renderer.render(scene, camera);
-			};
+			init();
 			animate();
-			
+
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+				camera.position.set(0, 5, 20);
+				camera.lookAt(10, 10, 10);
+
+				// scene
+
+				scene = new THREE.Scene();
+
+				var ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
+				scene.add(ambientLight);
+
+				var pointLight = new THREE.PointLight(0xffffff, 0.8);
+				camera.add(pointLight);
+				scene.add(camera);
+
+				// model
+
+				var onProgress = function(xhr) {
+
+					if (xhr.lengthComputable) {
+
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log(Math.round(percentComplete, 2) + '% downloaded');
+
+					}
+
+				};
+
+				var onError = function() {};
+
+				var axis = new THREE.AxisHelper(10);
+				scene.add(axis);
+
+				THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+
+				new THREE.MTLLoader()
+					.setPath('assets/Aventador/')
+					.load('Avent.mtl', function(materials) {
+
+						materials.preload();
+
+						new THREE.OBJLoader()
+							.setMaterials(materials)
+							.setPath('assets/Aventador/')
+							.load('Avent.obj', function(object) {
+
+								//object.scale.multiplyScalar(1.5);
+								lamborghini = object;
+								scene.add(lamborghini);
+								lamborghini.position.set(0, 0, 0);
+								lamborghini.rotation.y = Math.PI/2;
+
+							}, onProgress, onError);
+
+					});
+
+				new THREE.MTLLoader()
+					.setPath('assets/Tree/')
+					.load('Tree.mtl', function(materials) {
+						materials.preload();
+
+						new THREE.OBJLoader()
+							.setMaterials(materials)
+							.setPath('assets/Tree/')
+							.load('Tree.obj', function(object) {
+
+								object.scale.multiplyScalar(1);
+								tree = object;
+								scene.add(tree);
+								tree.position.set(5, 0, 0);
+
+
+							}, onProgress, onError);
+
+					});
+
+				//
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setClearColor("#fff");
+			//	renderer.setPixelRatio(window.devicePixelRatio);
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				document.body.appendChild(renderer.domElement);
+
+				controls = new THREE.OrbitControls(camera);
+				controls.enabled = false;
+				controls.update();
+
+			}
+
+			function animate() {
+				requestAnimationFrame(animate);
+				controls.update();
+				renderer.render(scene, camera);
+			}
+
 			window.addEventListener('keydown', onKeyDown, false);
 			function onKeyDown(e) {
 				var stepPosition = 0.5;
@@ -152,5 +164,7 @@
 				}
 			}
 		</script>
+
 	</body>
+
 </html>
