@@ -42,6 +42,14 @@
 			var camera, scene, renderer;
 			var ambientLight, pointLight;
 			var controls;
+			
+			var angle = 0;
+
+			// direction vector for movement
+			var direction = new THREE.Vector3(1, 0, 0);
+
+			// scalar to simulate speed
+			var speed = 0.5;
 
 			//Event Listeners
 			window.addEventListener('keydown', onKeyDown, false);
@@ -69,6 +77,34 @@
 				//Axis for help
 				var axis = new THREE.AxisHelper(10);
 				scene.add(axis);
+
+				// smooth my curve over this many points
+				var numPoints = 100;
+
+
+				// CURVA DE NIVEL
+				spline = new THREE.SplineCurve3([
+				   new THREE.Vector3(0, 0, 0),
+				   new THREE.Vector3(0, 7, 0),
+				   new THREE.Vector3(10, 10, 0),
+				   new THREE.Vector3(10, 2, 0),
+				   new THREE.Vector3(20, 5, 0),
+				   new THREE.Vector3(20, 15, 0)
+				]);
+
+				var material = new THREE.LineBasicMaterial({
+				    color: 0xff00f0,
+				});
+
+				var geometry = new THREE.Geometry();
+				var splinePoints = spline.getPoints(numPoints);
+
+				for(var i = 0; i < splinePoints.length; i++){
+				    geometry.vertices.push(splinePoints[i]);  
+				}
+
+				var line = new THREE.Line(geometry, material);
+				scene.add(line);
 				
 
 				// For Models
@@ -127,6 +163,7 @@
 			}
 
 			function animate() {
+				// move();
 				requestAnimationFrame(animate);
 				controls.update();
 				renderer.render(scene, camera);
@@ -138,20 +175,23 @@
 				//Controls
 				switch (e.which) {
 					//Move car with arrows controls
-					case 38:
+					case 38: //keyup
 						lamborghini.position['z'] += stepPosition;
 					break;
-					case 40:
+					case 40: //keydown
 						lamborghini.position['z'] -= stepPosition;
 					break;
+
 					//Change camera
-					case 49:
+					case 49: //1
 						camera.position.set(0, 5, 20);
 					break;
-					case 50:
+					case 50: //2
 						camera.position.set(10, 10, 10);
 					break;
-						lamborghini.applyMatrix();
+
+					lamborghini.applyMatrix();
+
 					default:
 						console.log(lamborghini.matrix);
 					break;
