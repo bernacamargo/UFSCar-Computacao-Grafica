@@ -34,7 +34,7 @@ Repositório de atividades do curso de Computação Gráfica, ministrada pelo Pr
 
 - [Angelo Souza](https://github.com/angelobzsouza) - 726496
 - [Bernardo Camargo](https://github.com/bernacamargo) - 620343
-- [Mariane Malheiros](https://github.com/maryanne25) - 
+- [Mariane Malheiros](https://github.com/maryanne25) - 726569
 
 ---
 #### Objetivo:
