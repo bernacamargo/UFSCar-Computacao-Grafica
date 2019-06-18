@@ -1,4 +1,4 @@
-## Computação Gráfica
+<!-- ## Computação Gráfica
 Repositório das atividades da disciplina de Computação Gráfica, ministrada pelo Pr° Dr° Mario Liziér em 2019/1 do curso de Ciência da Computação da Universidade Federal de São Carlos.
 
 #### Integrantes:
@@ -26,9 +26,17 @@ Atividade 2 - Entrega: 04/06
 - Matriz de Transformação do modelo (uma diferente para cada modelo);
 - Matriz de Visualização (uma para toda a a cena).
 - Duas posições distintas de câmeras
+
+Atividade 3 - Entrega 25/06
+
+- Implementação de uma curva na cena: movimento ou objeto;
+- Shader próprio incluindo o modelo de iluminação e tonalização phong.
+
+ -->
 # Projeto de Computação Gráfica 2019
 ## Universidade Federal de São Carlos - Sorocaba
 Repositório de atividades do curso de Computação Gráfica, ministrada pelo Pr° Dr° Mario Liziér em 2019/1 no curso de Ciência da Computação da Universidade Federal de São Carlos.
+
 
 #### Integrantes:
 
@@ -78,3 +86,8 @@ Para abrir o projeto, basta executar o arquivo index.html na pasta de cada ativi
   - Foi adicionada uma visualização dos eixos x, y e z para facilitar o entendimento dos conceitos para o grupo ao longo dessa e das próximas fases
 - Luz na cena
   - Foi adicionado luz na cena para ter uma melhor visualização dos objetos
+
+#### Atividade 3 - Entrega 25/06
+
+- Implementação de uma curva na cena: movimento ou objeto;
+- Shader próprio incluindo o modelo de iluminação e tonalização phong.
