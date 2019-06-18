@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Atividade II - Computação Gráfica</title>
+		<script src="../js/three.js"></script>
+		<script src="../js/DDSLoader.js"></script>
+		<script src="../js/MTLLoader.js"></script>
+		<script src="../js/OBJLoader.js"></script>
+		<script src="../js/OrbitControls.js"></script>
+		<style>
+			body { 
+				margin: 0; 
+				overflow-x: hidden;
+				overflow-y: hidden;
+			}
+			canvas { width: 100%; height: 100%}
+
+			.info {
+				position: absolute;
+				top: 10px;
+				margin-left: 10px;
+				width: 50%;
+				z-index: 100;
+				display:block;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="info">
+			<h2>Controles</h2>
+			<p>Mover para Frente: &uarr;</p>
+			<p>Mover para Trás: &darr;</p>
+			<p>Câmera 1: 1</p>
+			<p>Câmera 2: 2</p>
+		</div>
+
+		<script>
+			//Varibles
+			var container;
+			var camera, scene, renderer;
+			var ambientLight, pointLight;
+			var controls;
+
+			//Event Listeners
+			window.addEventListener('keydown', onKeyDown, false);
+			//Init Program
+			init();
+			animate();
+
+			//Functions
+			function init() {
+				// Scene
+				scene = new THREE.Scene();
+
+				//Camera
+				camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+				camera.position.set(0, 5, 20);
+				camera.lookAt(10, 10, 10);
+				scene.add(camera);
+
+				//Lights
+				ambientLight = new THREE.AmbientLight(0xcccccc, .8);
+				scene.add(ambientLight);
+				pointLight = new THREE.PointLight(0xffffff, 1);
+				camera.add(pointLight);
+
+				//Axis for help
+				var axis = new THREE.AxisHelper(10);
+				scene.add(axis);
+				
+
+				// For Models
+				var onProgress = function(xhr) {
+					if (xhr.lengthComputable) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+					}
+				}
+
+				//Load Models
+				THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+
+				//Load Lamborghini
+				new THREE.MTLLoader()
+					.setPath('assets/Aventador/')
+					.load('Avent.mtl', function(materials) {
+						materials.preload();
+						new THREE.OBJLoader()
+							.setMaterials(materials)
+							.setPath('assets/Aventador/')
+							.load('Avent.obj', function(object) {
+								lamborghini = object;
+								scene.add(lamborghini);
+								lamborghini.position.set(0, 0, 0);
+								lamborghini.rotation.y = Math.PI/2;
+							});
+					});
+
+				//Load Tree
+				new THREE.MTLLoader()
+					.setPath('assets/Tree/')
+					.load('Tree.mtl', function(materials) {
+						materials.preload();
+						new THREE.OBJLoader()
+							.setMaterials(materials)
+							.setPath('assets/Tree/')
+							.load('Tree.obj', function(object) {
+								object.scale.multiplyScalar(1);
+								tree = object;
+								scene.add(tree);
+								tree.position.set(5, 0, 0);
+							});
+					});
+
+				// Create Render
+				renderer = new THREE.WebGLRenderer();
+				renderer.setClearColor("#fff");
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				document.body.appendChild(renderer.domElement);
+
+				//Create Controls
+				controls = new THREE.OrbitControls(camera);
+				controls.enabled = false;
+				controls.update();
+
+			}
+
+			function animate() {
+				requestAnimationFrame(animate);
+				controls.update();
+				renderer.render(scene, camera);
+			}
+
+			function onKeyDown(e) {
+				var stepPosition = 0.5;
+
+				//Controls
+				switch (e.which) {
+					//Move car with arrows controls
+					case 38:
+						lamborghini.position['z'] += stepPosition;
+					break;
+					case 40:
+						lamborghini.position['z'] -= stepPosition;
+					break;
+					//Change camera
+					case 49:
+						camera.position.set(0, 5, 20);
+					break;
+					case 50:
+						camera.position.set(10, 10, 10);
+					break;
+						lamborghini.applyMatrix();
+					default:
+						console.log(lamborghini.matrix);
+					break;
+				}
+			}
+		</script>
+
+	</body>
+
+</html>
