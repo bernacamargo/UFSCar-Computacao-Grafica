@@ -1,199 +1,325 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Atividade II - Computação Gráfica</title>
-		<script src="../js/three.js"></script>
-		<script src="../js/DDSLoader.js"></script>
-		<script src="../js/MTLLoader.js"></script>
-		<script src="../js/OBJLoader.js"></script>
-		<script src="../js/OrbitControls.js"></script>
-		<style>
-			body { 
-				margin: 0; 
-				overflow-x: hidden;
-				overflow-y: hidden;
+<head>
+	<meta charset="utf-8">
+	<title>Atividade II - Computação Gráfica</title>
+	<script src="../js/three.js"></script>
+	<script src="../js/DDSLoader.js"></script>
+	<script src="../js/MTLLoader.js"></script>
+	<script src="../js/OBJLoader.js"></script>
+	<script src="../js/OrbitControls.js"></script>
+	<style>
+		body { 
+			margin: 0; 
+			overflow-x: hidden;
+			overflow-y: hidden;
+		}
+		canvas { width: 100%; height: 100%}
+
+		.info {
+			position: absolute;
+			top: 10px;
+			margin-left: 10px;
+			width: 50%;
+			z-index: 100;
+			display:block;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="info">
+		<h2>Controles</h2>
+		<p>Mover carro para Frente: &uarr;</p>
+		<p>Mover carro para Trás: &darr;</p>
+		<p>Câmera 1: 1</p>
+		<p>Câmera 2: 2</p>
+		<p>Câmera 3: 3</p>
+		<p>Câmera 4: 4</p>
+		<p>Câmera 5: 5</p>
+	</div>
+	<script type="x-shader/-xvertex" id="vertexShader">
+
+		varying vec3 normalInterp;
+		varying vec3 vertPos;
+
+		void main(){
+			gl_Position = projectionMatrix* modelViewMatrix * vec4(position, 1.0);
+			vec4 vertPos4 = modelViewMatrix * vec4(position, 1.0);
+			vertPos = vec3(vertPos4) / vertPos4.w;
+			normalInterp = vec3(normalMatrix * normal);
+		}
+	</script>
+
+	<script type = "x-shader/x-fragment" id = "fragmentShader">
+		precision mediump float;
+
+		varying vec3 normalInterp;
+		varying vec3 vertPos;
+
+		const vec3 lightPos = vec3(0, 5, 0);
+		const vec3 ambientColor = vec3(0.1, 0.3, 0.8);
+		const vec3 diffuseColor = vec3(0.3, 0.2, 0.8);
+		const vec3 specColor = vec3(0.7, 0.7, 0.8);
+
+		void main() {
+			vec3 normal = normalize(normalInterp);
+			vec3 lightDir = normalize(lightPos - vertPos);
+			vec3 reflectDir = reflect(-lightDir, normal);
+			vec3 viewDir = normalize(-vertPos);
+
+			float lambertian = max(dot(lightDir,normal), 0.0);
+			float specular = 0.0;
+
+			if(lambertian > 0.0) {
+				float specAngle = max(dot(reflectDir, viewDir), 0.0);
+				specular = pow(specAngle, 4.0);
 			}
-			canvas { width: 100%; height: 100%}
+			gl_FragColor = vec4(ambientColor + lambertian*diffuseColor +	specular*specColor, 1.0);
+		}
+	</script>
 
-			.info {
-				position: absolute;
-				top: 10px;
-				margin-left: 10px;
-				width: 50%;
-				z-index: 100;
-				display:block;
-			}
-		</style>
-	</head>
+	<script>
+		//Varibles
+		var container;
+		var camera, scene, renderer;
+		var ambientLight, pointLight;
+		var controls;
+		
+		var angle = 0;
 
-	<body>
-		<div class="info">
-			<h2>Controles</h2>
-			<p>Mover para Frente: &uarr;</p>
-			<p>Mover para Trás: &darr;</p>
-			<p>Câmera 1: 1</p>
-			<p>Câmera 2: 2</p>
-		</div>
+		var lamborghini;
+		var three;
+		var cube;
+		var line1;
+		var line2;
+		// var sphere;
 
-		<script>
-			//Varibles
-			var container;
-			var camera, scene, renderer;
-			var ambientLight, pointLight;
-			var controls;
-			
-			var angle = 0;
+		// direction vector for movement
+		var direction = new THREE.Vector3(1, 0, 0);
 
-			// direction vector for movement
-			var direction = new THREE.Vector3(1, 0, 0);
+		// scalar to simulate speed
+		var speed = 0.5;
 
-			// scalar to simulate speed
-			var speed = 0.5;
+		//Event Listeners
+		window.addEventListener('keydown', onKeyDown, false);
+		//Init Program
+		init();
+		animate();
 
-			//Event Listeners
-			window.addEventListener('keydown', onKeyDown, false);
-			//Init Program
-			init();
-			animate();
+		//Functions
+		function init() {
+			// Scene
+			scene = new THREE.Scene();
 
-			//Functions
-			function init() {
-				// Scene
-				scene = new THREE.Scene();
+			//Camera
+			camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+			camera.position.set(0, 5, 20);
+			camera.lookAt(10, 10, 10);
+			scene.add(camera);
 
-				//Camera
-				camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-				camera.position.set(0, 5, 20);
-				camera.lookAt(10, 10, 10);
-				scene.add(camera);
+			//Lights
+			ambientLight = new THREE.AmbientLight(0xffffff, .8);
+			scene.add(ambientLight);
+			pointLight = new THREE.PointLight(0xffffff, 1);
+			camera.add(pointLight);
 
-				//Lights
-				ambientLight = new THREE.AmbientLight(0xcccccc, .8);
-				scene.add(ambientLight);
-				pointLight = new THREE.PointLight(0xffffff, 1);
-				camera.add(pointLight);
+			//Axis for help
+			var axis = new THREE.AxisHelper(10);
+			scene.add(axis);
 
-				//Axis for help
-				var axis = new THREE.AxisHelper(10);
-				scene.add(axis);
+			// var material = new THREE.LineBasicMaterial({
+			//     color: 0xff00f0,
+			// });
+			var phongShader = THREE.ShaderLib.phong;
+			var mUniforms = THREE.UniformsUtils.clone(phongShader.uniforms);
+
+			// Material
+			material = new THREE.ShaderMaterial({
+				uniforms: mUniforms,
+				vertexShader: document.getElementById('vertexShader').textContent,
+				fragmentShader: document.getElementById('fragmentShader').textContent
+			});
 
 
-				// CURVA DE NIVEL
-				var curve = new THREE.CubicBezierCurve3(
-					new THREE.Vector3( -10, 0, 0 ),
-					new THREE.Vector3( -10, 12, 0 ),
-					new THREE.Vector3( 10, 12, 0 ),
-					new THREE.Vector3( 10, 0, 0 )
+			// CURVE
+			var curve1 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( 0, 0, -10 ),
+				new THREE.Vector3( 0, 12, -10 ),
+				new THREE.Vector3( 0, 12, 10 ),
+				new THREE.Vector3( 0, 0, 10 )
 				);
+			
+			var curve2 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( -10, 0, 0 ),
+				new THREE.Vector3( -10, 12, 0 ),
+				new THREE.Vector3( 10, 12, 0 ),
+				new THREE.Vector3( 10, 0, 0 )
+				);
+			
+			var geometry = new THREE.Geometry();
+			var splinePoints1 = curve1.getPoints(50);
+			for(var i = 0; i < splinePoints1.length; i++){
+				geometry.vertices.push(splinePoints1[i]);  
+			}
+			line1 = new THREE.Line(geometry, material);
+			scene.add(line1);
 
-				var material = new THREE.LineBasicMaterial({
-				    color: 0xff00f0,
+			var geometry = new THREE.Geometry();
+			var splinePoints2 = curve2.getPoints(50);
+			for(var i = 0; i < splinePoints2.length; i++){
+				geometry.vertices.push(splinePoints2[i]);  
+			}
+			line2 = new THREE.Line(geometry, material);
+			scene.add(line2);
+
+
+
+			// SPHERE
+			// var geometry = new THREE.SphereGeometry( 3, 8, 8 );
+			// sphere = new THREE.Mesh(geometry, material);
+			// sphere.position.set(0, 10, 0);
+			// scene.add(sphere);
+
+
+
+			// CUBE
+			var geometry = new THREE.BoxBufferGeometry( 3, 3, 3 );
+			cube = new THREE.Mesh( geometry, material );
+			scene.add( cube );
+			cube.position.set(-5, 3, 0);
+			cube.rotation.y = 0;
+
+
+			// For Models
+			var onProgress = function(xhr) {
+				if (xhr.lengthComputable) {
+					var percentComplete = xhr.loaded / xhr.total * 100;
+				}
+			}
+
+			//Load Models
+			THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+
+			
+
+			//Load Lamborghini
+			new THREE.MTLLoader()
+			.setPath('assets/Aventador/')
+			.load('Avent.mtl', function(materials) {
+				materials.preload();
+				new THREE.OBJLoader()
+				.setMaterials(materials)
+				.setPath('assets/Aventador/')
+				.load('Avent.obj', function(object) {
+
+
+					lamborghini = object;
+					scene.add(lamborghini);
+					lamborghini.position.set(0, 0, 0);
+					lamborghini.rotation.y = Math.PI/2;
 				});
+			});
 
-				var geometry = new THREE.Geometry();
-				var splinePoints = curve.getPoints(50);
+			//Load Tree
+			new THREE.MTLLoader()
+			.setPath('assets/Tree/')
+			.load('Tree.mtl', function(materials) {
+				materials.preload();
+				new THREE.OBJLoader()
+				.setMaterials(materials)
+				.setPath('assets/Tree/')
+				.load('Tree.obj', function(object) {
+					object.scale.multiplyScalar(1);
+					tree = object;
+					scene.add(tree);
+					tree.position.set(5, 0, 0);
+				});
+			});
 
-				for(var i = 0; i < splinePoints.length; i++){
-				    geometry.vertices.push(splinePoints[i]);  
-				}
+			// Create Render
+			renderer = new THREE.WebGLRenderer();
+			renderer.setClearColor("#fff");
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild(renderer.domElement);
 
-				var line = new THREE.Line(geometry, material);
-				scene.add(line);
-				
+			//Create Controls
+			controls = new THREE.OrbitControls(camera);
+			controls.enabled = false;
+			controls.update();
 
-				// For Models
-				var onProgress = function(xhr) {
-					if (xhr.lengthComputable) {
-						var percentComplete = xhr.loaded / xhr.total * 100;
-					}
-				}
+		}
 
-				//Load Models
-				THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+		function rotate() {
 
-				//Load Lamborghini
-				new THREE.MTLLoader()
-					.setPath('assets/Aventador/')
-					.load('Avent.mtl', function(materials) {
-						materials.preload();
-						new THREE.OBJLoader()
-							.setMaterials(materials)
-							.setPath('assets/Aventador/')
-							.load('Avent.obj', function(object) {
-								lamborghini = object;
-								scene.add(lamborghini);
-								lamborghini.position.set(0, 0, 0);
-								lamborghini.rotation.y = Math.PI/2;
-							});
-					});
+			var speed1 = 0.005;
+			var speed2 = 0.01;
+			var speed3 = 0.05;
+			var speed4 = 0.1;
 
-				//Load Tree
-				new THREE.MTLLoader()
-					.setPath('assets/Tree/')
-					.load('Tree.mtl', function(materials) {
-						materials.preload();
-						new THREE.OBJLoader()
-							.setMaterials(materials)
-							.setPath('assets/Tree/')
-							.load('Tree.obj', function(object) {
-								object.scale.multiplyScalar(1);
-								tree = object;
-								scene.add(tree);
-								tree.position.set(5, 0, 0);
-							});
-					});
+			if(cube != null){
+				cube.rotation.x +=speed1;
+				cube.rotation.y -= speed2;
 
-				// Create Render
-				renderer = new THREE.WebGLRenderer();
-				renderer.setClearColor("#fff");
-				renderer.setSize(window.innerWidth, window.innerHeight);
-				document.body.appendChild(renderer.domElement);
+				line1.rotation.x += speed4;
+				line1.rotation.y += speed4;
+				line1.rotation.z += speed4;
 
-				//Create Controls
-				controls = new THREE.OrbitControls(camera);
-				controls.enabled = false;
-				controls.update();
-
+				line2.rotation.x -= speed4;
+				line2.rotation.y -= speed4;
+				line2.rotation.z -= speed4;
+			    // cube.rotation.z += 0.01;
 			}
+			
+		}
 
-			function animate() {
-				// move();
-				requestAnimationFrame(animate);
-				controls.update();
-				renderer.render(scene, camera);
+		function animate() {
+			// move();
+			requestAnimationFrame(animate);
+			rotate();
+			controls.update();
+			renderer.render(scene, camera);
+		}
+
+		function onKeyDown(e) {
+			var stepPosition = 0.5;
+
+			//Controls
+			switch (e.which) {
+				//Move car with arrows controls
+				case 38: //keyup
+				lamborghini.position['z'] += stepPosition;
+				break;
+				case 40: //keydown
+				lamborghini.position['z'] -= stepPosition;
+				break;
+
+				//Change camera
+				case 49: //1
+				camera.position.set(0, 5, 20);
+				break;
+				case 50: //2
+				camera.position.set(10, 10, 10);
+				break;
+				case 51: //3
+				camera.position.set(-10, 10, 10);
+				break;
+				case 52: //4
+				camera.position.set(0, 20, 0);
+				break;
+				case 53: //5
+				camera.position.set(-10, 10, -15);
+				break;
+
+				lamborghini.applyMatrix();
+
+				default:
+				console.log(lamborghini.matrix);
+				break;
 			}
-
-			function onKeyDown(e) {
-				var stepPosition = 0.5;
-
-				//Controls
-				switch (e.which) {
-					//Move car with arrows controls
-					case 38: //keyup
-						lamborghini.position['z'] += stepPosition;
-					break;
-					case 40: //keydown
-						lamborghini.position['z'] -= stepPosition;
-					break;
-
-					//Change camera
-					case 49: //1
-						camera.position.set(0, 5, 20);
-					break;
-					case 50: //2
-						camera.position.set(10, 10, 10);
-					break;
-
-					lamborghini.applyMatrix();
-
-					default:
-						console.log(lamborghini.matrix);
-					break;
-				}
-			}
-		</script>
+		}
+	</script>
 
 	</body>
 
-</html>
+	</html>
