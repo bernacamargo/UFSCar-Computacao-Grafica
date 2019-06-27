@@ -91,9 +91,9 @@ Para abrir o projeto, basta executar o arquivo index.html na pasta de cada ativi
 
 - Implementação de uma curva na cena: movimento ou objeto;
 - Shader próprio incluindo o modelo de iluminação e tonalização phong.
+ 
 
-
-#### Atividade 4 - Entrega 09/07
+#### Atividade 4 (Final) - Entrega 09/07
 
 Requisitos básicos:
 - Contendo pelo menos:
