@@ -91,3 +91,24 @@ Para abrir o projeto, basta executar o arquivo index.html na pasta de cada ativi
 
 - Implementação de uma curva na cena: movimento ou objeto;
 - Shader próprio incluindo o modelo de iluminação e tonalização phong.
+
+
+#### Atividade 4 - Entrega 09/07
+
+Requisitos básicos:
+- Contendo pelo menos:
+- Dois objetos carregados de arquivos
+- Cinco objetos no total
+- Dois movimentos distintos
+- Uma curva de bézier
+- Textura em algum modelo obj
+- Textura em algum objeto simples
+- Shader próprio com cálculo de iluminação phong (em shader próprio)
+- Duas posições distintas de câmeras
+- Alguma iteração do usuário (teclado ou mouse)
+- Um objeto articulado (uso movimento relativo)
+
+Requisitos extras:
+- Detecção de colisão;
+- Mais objetos, texturas, shaders, cameras, etc ...
+
