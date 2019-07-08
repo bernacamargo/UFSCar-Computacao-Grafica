@@ -96,6 +96,7 @@
 		var road;
 		var line1;
 		var line2;
+		var line3, line4, line5, line6, line7;
 		var horse, mixer; 
 		var material;
 		// var sphere;
@@ -149,17 +150,52 @@
 
 			// CURVE
 			var curve1 = new THREE.CubicBezierCurve3(
-				new THREE.Vector3( 0, 0, -10 ),
-				new THREE.Vector3( 0, 12, -10 ),
-				new THREE.Vector3( 0, 12, 10 ),
-				new THREE.Vector3( 0, 0, 10 )
+				new THREE.Vector3( -12, 0, 0 ),
+				new THREE.Vector3( -12, 15, 0 ),
+				new THREE.Vector3( 12, 15, 0 ),
+				new THREE.Vector3( 12, 0, 0 )
 				);
 			
 			var curve2 = new THREE.CubicBezierCurve3(
-				new THREE.Vector3( -10, 0, 0 ),
-				new THREE.Vector3( -10, 12, 0 ),
-				new THREE.Vector3( 10, 12, 0 ),
-				new THREE.Vector3( 10, 0, 0 )
+				new THREE.Vector3( -12.5, 0, 0 ),
+				new THREE.Vector3( -12.5, 15.5, 0 ),
+				new THREE.Vector3( 12.5, 15.5, 0 ),
+				new THREE.Vector3( 12.5, 0, 0 )
+				);
+
+			var curve3 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( -13, 0, 0 ),
+				new THREE.Vector3( -13, 16, 0 ),
+				new THREE.Vector3( 13, 16, 0 ),
+				new THREE.Vector3( 13, 0, 0 )
+				);
+
+			var curve4 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( -13.5, 0, 0 ),
+				new THREE.Vector3( -13.5, 16.5, 0 ),
+				new THREE.Vector3( 13.5, 16.5, 0 ),
+				new THREE.Vector3( 13.5, 0, 0 )
+				);
+
+			var curve5 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( -14, 0, 0 ),
+				new THREE.Vector3( -14, 17, 0 ),
+				new THREE.Vector3( 14, 17, 0 ),
+				new THREE.Vector3( 14, 0, 0 )
+				);
+
+			var curve6 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( -14.5, 0, 0 ),
+				new THREE.Vector3( -14.5, 17.5, 0 ),
+				new THREE.Vector3( 14.5, 17.5, 0 ),
+				new THREE.Vector3( 14.5, 0, 0 )
+				);
+
+			var curve7 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( -15, 0, 0 ),
+				new THREE.Vector3( -15, 18, 0 ),
+				new THREE.Vector3( 15, 18, 0 ),
+				new THREE.Vector3( 15, 0, 0 )
 				);
 			
 			var geometry = new THREE.Geometry();
@@ -167,7 +203,8 @@
 			for(var i = 0; i < splinePoints1.length; i++){
 				geometry.vertices.push(splinePoints1[i]);  
 			}
-			line1 = new THREE.Line(geometry, material);
+			var curve1Material = new THREE.LineBasicMaterial( { color : 0x8B00FF } );
+			line1 = new THREE.Line(geometry, curve1Material);
 			scene.add(line1);
 
 			var geometry = new THREE.Geometry();
@@ -175,8 +212,54 @@
 			for(var i = 0; i < splinePoints2.length; i++){
 				geometry.vertices.push(splinePoints2[i]);  
 			}
-			line2 = new THREE.Line(geometry, material);
+			var curve2Material = new THREE.LineBasicMaterial( { color : 0x4B0082 } );
+			line2 = new THREE.Line(geometry, curve2Material);
 			scene.add(line2);
+
+			var geometry = new THREE.Geometry();
+			var splinePoints3 = curve3.getPoints(50);
+			for(var i = 0; i < splinePoints3.length; i++){
+				geometry.vertices.push(splinePoints3[i]);  
+			}
+			var curve3Material = new THREE.LineBasicMaterial( { color : 0x0000FF } );
+			line3 = new THREE.Line(geometry, curve3Material);
+			scene.add(line3);
+
+			var geometry = new THREE.Geometry();
+			var splinePoints4 = curve4.getPoints(50);
+			for(var i = 0; i < splinePoints4.length; i++){
+				geometry.vertices.push(splinePoints4[i]);  
+			}
+			var curve4Material = new THREE.LineBasicMaterial( { color : 0x00FF00 } );
+			line4 = new THREE.Line(geometry, curve4Material);
+			scene.add(line4);
+
+			var geometry = new THREE.Geometry();
+			var splinePoints5 = curve5.getPoints(50);
+			for(var i = 0; i < splinePoints5.length; i++){
+				geometry.vertices.push(splinePoints5[i]);  
+			}
+			var curve5Material = new THREE.LineBasicMaterial( { color : 0xFFFF00 } );
+			line5 = new THREE.Line(geometry, curve5Material);
+			scene.add(line5);
+
+			var geometry = new THREE.Geometry();
+			var splinePoints6 = curve6.getPoints(50);
+			for(var i = 0; i < splinePoints6.length; i++){
+				geometry.vertices.push(splinePoints6[i]);  
+			}
+			var curve6Material = new THREE.LineBasicMaterial( { color : 0xFF7F00 } );
+			line6 = new THREE.Line(geometry, curve6Material);
+			scene.add(line6);
+
+			var geometry = new THREE.Geometry();
+			var splinePoints7 = curve7.getPoints(50);
+			for(var i = 0; i < splinePoints7.length; i++){
+				geometry.vertices.push(splinePoints7[i]);  
+			}
+			var curve7Material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+			line7 = new THREE.Line(geometry, curve7Material);
+			scene.add(line7);
 
 
 
@@ -192,7 +275,7 @@
 			var geometry = new THREE.BoxBufferGeometry( 3, 3, 3 );
 			cube = new THREE.Mesh( geometry, material );
 			scene.add( cube );
-			cube.position.set(-5, 3, 0);
+			cube.position.set(18, 10, 0);
 			cube.rotation.y = 0;
 
 
@@ -296,13 +379,13 @@
 				cube.rotation.x +=speed1;
 				cube.rotation.y -= speed2;
 
-				line1.rotation.x += speed3;
+				/*line1.rotation.x += speed3;
 				line1.rotation.y += speed3;
 				line1.rotation.z += speed3;
 
 				line2.rotation.x -= speed3;
 				line2.rotation.y -= speed3;
-				line2.rotation.z -= speed3;
+				line2.rotation.z -= speed3;*/
 			    // cube.rotation.z += 0.01;
 			}
 			
