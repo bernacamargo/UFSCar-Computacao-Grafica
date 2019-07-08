@@ -93,6 +93,7 @@
 		var lamborghini;
 		var tree;
 		var cube;
+		var road;
 		var line1;
 		var line2;
 		var horse, mixer; 
@@ -129,8 +130,8 @@
 			camera.add(pointLight);
 
 			//Axis for help
-			var axis = new THREE.AxisHelper(10);
-			scene.add(axis);
+			//var axis = new THREE.AxisHelper(10);
+			//scene.add(axis);
 
 			// var material = new THREE.LineBasicMaterial({
 			//     color: 0xff00f0,
@@ -216,9 +217,10 @@
 				.setMaterials(materials)
 				.setPath('assets/Aventador/')
 				.load('Avent.obj', function(object) {
+					object.scale.multiplyScalar(1);
 					lamborghini = object;
 					scene.add(lamborghini);
-					lamborghini.position.set(0, 0, 0);
+					lamborghini.position.set(-2, 0, 0);
 					lamborghini.rotation.y = Math.PI/2;
 				});
 			});
@@ -239,7 +241,23 @@
 				});
 			});
 
+			new THREE.MTLLoader()
+			.setPath('assets/Road/')
+			.load('untitled.mtl', function(materials) {
+				materials.preload();
+				new THREE.OBJLoader()
+				.setMaterials(materials)
+				.setPath('assets/Road/')
+				.load('untitled.obj', function(object) {
+					object.scale.multiplyScalar(1.5);
+					road = object;
+					scene.add(road);
+					road.position.set(0, -3, -3);
+					road.rotation.y = Math.PI/2;
+				});
+			});
 
+			//Load Horse
 			new THREE.GLTFLoader()
 			.setPath('assets/Horse/')
 			.load( 'Horse.glb', function ( gltf ) {
@@ -249,7 +267,7 @@
 				scene.add( horse );
 				mixer = new THREE.AnimationMixer( horse );
 				mixer.clipAction( gltf.animations[ 0 ] ).setDuration( 1 ).play();
-				horse.position.set(3, 0, 8);
+				horse.position.set(0.75, 0, 2);
 				
 			});
 
@@ -329,6 +347,7 @@
 				//Move car with arrows controls
 				case 38: //keyup
 				lamborghini.position['z'] += stepPosition;
+				horse.position['z'] += 0.1;
 				break;
 				case 40: //keydown
 				lamborghini.position['z'] -= stepPosition; 	
